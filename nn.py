@@ -299,7 +299,7 @@ class MatrixVectorAdd(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
-        matrix_copy = inputs[0]
+        matrix_copy = inputs[0].copy()
         matrix_copy += inputs[1]
         return matrix_copy
         
@@ -307,7 +307,12 @@ class MatrixVectorAdd(FunctionNode):
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
-        
+        matrix1 = np.ones_like(inputs[0]) * gradient
+        vector1 = np.ones_like(inputs[1]) * gradient
+        print("matrix1: " + str(matrix1))
+        print("vector1: " + str(vector1))
+        return list([matrix1, vector1])
+
 
 
 class ReLU(FunctionNode):
