@@ -264,9 +264,7 @@ class Add(FunctionNode):
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
-        return list(np.ones_like(inputs[0])*gradient)
-
-
+        return list(np.ones_like(inputs)*gradient)
 
 class MatrixMultiply(FunctionNode):
     """
@@ -281,10 +279,12 @@ class MatrixMultiply(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        return np.dot(inputs[0], inputs[1])
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        return list([np.dot(gradient, np.transpose(inputs[1])), np.dot(np.transpose(inputs[0]), gradient)])
 
 class MatrixVectorAdd(FunctionNode):
     """
@@ -299,9 +299,7 @@ class MatrixVectorAdd(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
-        matrix_copy = inputs[0]
-        matrix_copy += inputs[1]
-        return matrix_copy
+        
 
     @staticmethod
     def backward(inputs, gradient):
