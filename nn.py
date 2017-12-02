@@ -376,8 +376,11 @@ class ReLU(FunctionNode):
         #     print("type (zeros): " + str(type(zeros)))
         #     return list(zeros)
         #
-        ones = np.where(inputs[0]>0, 1, inputs[0])
-        return [gradient * np.where(ones <= 0, 0, ones)]
+
+        zeros = np.where(inputs[0]<=0, 0, inputs[0])
+        gradient_and_zeros = np.where(zeros>0, gradient, zeros)
+        return list([gradient_and_zeros])
+
 
 
 class SquareLoss(FunctionNode):
