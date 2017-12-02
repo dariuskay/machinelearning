@@ -346,22 +346,38 @@ class ReLU(FunctionNode):
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
-        print "UNO"
-        print inputs[0]
-        print "DOS"
-        print gradient
-        print "TRES"
-        print inputs[0] * gradient[0]
+        # print "UNO"
+        # print inputs[0]
+        # print "DOS"
+        # print gradient
+        # print "TRES"
+        # print inputs[0] * gradient[0]
+        #
+        # matrix_copy = inputs[0].copy()
+        # matrix_copy[matrix_copy<0] = 0
+        #
+        # print type(np.maximum(np.array(matrix_copy), gradient[0]))
+        #
+        # if len(gradient) == 2:
+        #     if gradient[0] == -9:
+        #         return list(np.array([gradient]))
+        # return list(np.maximum(np.array(matrix_copy), gradient[0]))
 
-        matrix_copy = inputs[0].copy()
-        matrix_copy[matrix_copy<0] = 0
-
-        print type(np.maximum(np.array(matrix_copy), gradient[0]))
-
-        if len(gradient) == 2:
-            if gradient[0] == -9:
-                return list(np.array([gradient]))
-        return list(np.maximum(np.array(matrix_copy), gradient[0]))
+        # matrix_copy = inputs[0].copy()
+        # matrix_copy[matrix_copy<0] = 0
+        # matrix_second_copy = inputs[0].copy()
+        # if matrix_copy == matrix_second_copy:
+        #     matrix_second_copy *= gradient
+        #     return_shape = np.sum(matrix_second_copy, axis=0)
+        #     print("type (no zeros): " + str(type(matrix_second_copy)))
+        #     return list(matrix_second_copy)
+        # else:
+        #     zeros = np.zeros_like(inputs[0])
+        #     print("type (zeros): " + str(type(zeros)))
+        #     return list(zeros)
+        #
+        ones = np.where(inputs[0]>0, 1, inputs[0])
+        return [gradient * np.where(ones <= 0, 0, ones)]
 
 
 class SquareLoss(FunctionNode):
