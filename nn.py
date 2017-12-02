@@ -302,15 +302,20 @@ class MatrixVectorAdd(FunctionNode):
         matrix_copy = inputs[0].copy()
         matrix_copy += inputs[1]
         return matrix_copy
-        
+
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        # print("inputs0: " + str(inputs[0]))
+        # print("inputs1: " + str(inputs[1]))
         matrix1 = np.ones_like(inputs[0]) * gradient
         vector1 = np.ones_like(inputs[1]) * gradient
-        print("matrix1: " + str(matrix1))
-        print("vector1: " + str(vector1))
+        # print("matrix1: " + str(matrix1))
+        # print("vector1: " + str(vector1))
+        # print("vectorLen: " + str(len(vector1)))
+        vector1 = np.sum(vector1, axis=0)
+        # print list([matrix1, vector1])
         return list([matrix1, vector1])
 
 
@@ -328,13 +333,35 @@ class ReLU(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
-        matrix_copy = inputs[0]
+        # print "UNO"
+        # print type(inputs[0])
+        matrix_copy = inputs[0].copy()
+        # print "DOS"
+        # print matrix_copy
         matrix_copy[matrix_copy<0] = 0
+        print "MC"
+        print matrix_copy
         return matrix_copy
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        print "UNO"
+        print inputs[0]
+        print "DOS"
+        print gradient
+        print "TRES"
+        print inputs[0] * gradient[0]
+
+        matrix_copy = inputs[0].copy()
+        matrix_copy[matrix_copy<0] = 0
+
+        print type(np.maximum(np.array(matrix_copy), gradient[0]))
+
+        if len(gradient) == 2:
+            if gradient[0] == -9:
+                return list(np.array([gradient]))
+        return list(np.maximum(np.array(matrix_copy), gradient[0]))
 
 
 class SquareLoss(FunctionNode):
