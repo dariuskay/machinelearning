@@ -299,11 +299,16 @@ class MatrixVectorAdd(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        matrix_copy = inputs[0]
+        matrix_copy += inputs[1]
+        return matrix_copy
         
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        
+
 
 class ReLU(FunctionNode):
     """
@@ -318,10 +323,14 @@ class ReLU(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        matrix_copy = inputs[0]
+        matrix_copy[matrix_copy<0] = 0
+        return matrix_copy
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+
 
 class SquareLoss(FunctionNode):
     """
