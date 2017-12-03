@@ -182,8 +182,8 @@ class Graph(object):
         "*** YOUR CODE HERE ***"
         nodes = self.get_nodes()
         self.node_values[loss_node][1] = 1.0
-        indexes = np.arange((len(nodes) - 1), -1, -1)
-        for i in indexes:
+        indeces = np.arange((len(nodes) - 1), -1, -1)
+        for i in indeces:
             node = nodes[i]
             gradients = node.backward(self.get_inputs(node), self.get_gradient(node))
             for j in range(len(gradients)):
