@@ -110,9 +110,13 @@ class Graph(object):
         "*** YOUR CODE HERE ***"
 
         parents = node.get_parents()
-        # THEN WHAT?
+        inputs = []
+        for parent in parents:
+            input = self.node_values[parent][0]
+            inputs.append(input)
+        return inputs
 
-        
+
 
     def get_output(self, node):
         """
@@ -155,17 +159,8 @@ class Graph(object):
         accumulator for the node, with correct shape.
         """
         "*** YOUR CODE HERE ***"
-
-        print("ANOTHER CALL TO ADD.")
-
         self.nodes += [node]
-
-        print "PARENTS OF THIS NODE (to be added)"
-        print self.get_inputs(node)
-
         output = node.forward(self.get_inputs(node))
-
-        print("Got here... The forward has been calculated...")
 
         self.node_values[node] = [output, np.zeros_like(output)]
 
@@ -185,6 +180,16 @@ class Graph(object):
         assert np.asarray(self.get_output(loss_node)).ndim == 0
 
         "*** YOUR CODE HERE ***"
+        nodes = self.get_nodes()
+        self.node_values[loss_node][1] = 1.0
+        indexes = np.arange((len(nodes) - 1), -1, -1)
+        for i in indexes:
+            node = nodes[i]
+            gradients = node.backward(self.get_inputs(node), self.get_gradient(node))
+            for j in range(len(gradients)):
+                gradient = gradients[j]
+                parent = node.get_parents()[j]
+                self.node_values[parent][1] += gradient
 
     def step(self, step_size):
         """
@@ -195,6 +200,9 @@ class Graph(object):
         Hint: each Variable has a `.data` attribute
         """
         "*** YOUR CODE HERE ***"
+        for node in self.get_nodes():
+            if type(node) is Variable:
+                node.data -= (step_size * self.get_gradient(node))
 
 class DataNode(object):
     """
