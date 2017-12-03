@@ -333,55 +333,16 @@ class ReLU(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
-        # print "UNO"
-        # print type(inputs[0])
         matrix_copy = inputs[0].copy()
-        # print "DOS"
-        # print matrix_copy
         matrix_copy[matrix_copy<0] = 0
-        print "MC"
-        print matrix_copy
         return matrix_copy
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
-        # print "UNO"
-        # print inputs[0]
-        # print "DOS"
-        # print gradient
-        # print "TRES"
-        # print inputs[0] * gradient[0]
-        #
-        # matrix_copy = inputs[0].copy()
-        # matrix_copy[matrix_copy<0] = 0
-        #
-        # print type(np.maximum(np.array(matrix_copy), gradient[0]))
-        #
-        # if len(gradient) == 2:
-        #     if gradient[0] == -9:
-        #         return list(np.array([gradient]))
-        # return list(np.maximum(np.array(matrix_copy), gradient[0]))
-
-        # matrix_copy = inputs[0].copy()
-        # matrix_copy[matrix_copy<0] = 0
-        # matrix_second_copy = inputs[0].copy()
-        # if matrix_copy == matrix_second_copy:
-        #     matrix_second_copy *= gradient
-        #     return_shape = np.sum(matrix_second_copy, axis=0)
-        #     print("type (no zeros): " + str(type(matrix_second_copy)))
-        #     return list(matrix_second_copy)
-        # else:
-        #     zeros = np.zeros_like(inputs[0])
-        #     print("type (zeros): " + str(type(zeros)))
-        #     return list(zeros)
-        #
-
         zeros = np.where(inputs[0]<=0, 0, inputs[0])
         gradient_and_zeros = np.where(zeros>0, gradient, zeros)
         return list([gradient_and_zeros])
-
-
 
 class SquareLoss(FunctionNode):
     """
@@ -405,10 +366,13 @@ class SquareLoss(FunctionNode):
         a_copy *= 0.5
         return np.mean(a_copy)
 
+
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
-        
+
+        return [(inputs[0] - inputs[1]) * (gradient / len(inputs[0])) , (inputs[1] - inputs[0]) * (gradient / len(inputs[0]))]
+
 
 class SoftmaxLoss(FunctionNode):
     """
