@@ -398,10 +398,17 @@ class SquareLoss(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
+        a_copy = inputs[0].copy()
+        b_copy = inputs[1].copy()
+        a_copy -= b_copy
+        a_copy *= a_copy
+        a_copy *= 0.5
+        return np.mean(a_copy)
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
+        
 
 class SoftmaxLoss(FunctionNode):
     """
