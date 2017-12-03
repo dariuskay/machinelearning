@@ -75,15 +75,17 @@ class Graph(object):
         so don't forget to call `self.add` on each of the variables.
         """
         "*** YOUR CODE HERE ***"
-        for var in variables:
-            self.add(var)
-
         self.inputs = []
-        self.nodes = []
         self.outputs = []
+        self.nodes = []
         self.gradient = 0
+        self.node_values = dict()
 
+        print("IN THE BEGINNING, THERE WAS __init__...")
 
+        for var in variables:
+            print("variable: " + str(var))
+            self.add(var)
 
     def get_nodes(self):
         """
@@ -94,6 +96,7 @@ class Graph(object):
         Returns: a list of nodes
         """
         "*** YOUR CODE HERE ***"
+        return self.nodes
 
     def get_inputs(self, node):
         """
@@ -106,6 +109,11 @@ class Graph(object):
         """
         "*** YOUR CODE HERE ***"
 
+        parents = node.get_parents()
+        # THEN WHAT?
+
+        
+
     def get_output(self, node):
         """
         Retrieves the output to a node in the graph. Assume the `node` has
@@ -114,6 +122,8 @@ class Graph(object):
         Returns: a numpy array or a scalar
         """
         "*** YOUR CODE HERE ***"
+
+        return self.node_values[node][0]
 
     def get_gradient(self, node):
         """
@@ -130,6 +140,8 @@ class Graph(object):
         """
         "*** YOUR CODE HERE ***"
 
+        return self.node_values[node][1]
+
     def add(self, node):
         """
         Adds a node to the graph.
@@ -143,6 +155,19 @@ class Graph(object):
         accumulator for the node, with correct shape.
         """
         "*** YOUR CODE HERE ***"
+
+        print("ANOTHER CALL TO ADD.")
+
+        self.nodes += [node]
+
+        print "PARENTS OF THIS NODE (to be added)"
+        print self.get_inputs(node)
+
+        output = node.forward(self.get_inputs(node))
+
+        print("Got here... The forward has been calculated...")
+
+        self.node_values[node] = [output, np.zeros_like(output)]
 
     def backprop(self):
         """
@@ -368,20 +393,14 @@ class SquareLoss(FunctionNode):
     @staticmethod
     def forward(inputs):
         "*** YOUR CODE HERE ***"
-        a_copy = inputs[0].copy()
-        b_copy = inputs[1].copy()
-        a_copy -= b_copy
-        a_copy *= a_copy
-        a_copy *= 0.5
-        return np.mean(a_copy)
+        new = 0.5 * (inputs[0] - inputs[1])**2
+        return np.mean(0.5 * (inputs[0] - inputs[1])**2)
 
 
     @staticmethod
     def backward(inputs, gradient):
         "*** YOUR CODE HERE ***"
-
         return [(inputs[0] - inputs[1]) * (gradient / len(inputs[0])) , (inputs[1] - inputs[0]) * (gradient / len(inputs[0]))]
-
 
 class SoftmaxLoss(FunctionNode):
     """
