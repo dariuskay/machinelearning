@@ -81,10 +81,10 @@ class Graph(object):
         self.gradient = 0
         self.node_values = dict()
 
-        print("IN THE BEGINNING, THERE WAS __init__...")
+        # print("IN THE BEGINNING, THERE WAS __init__...")
 
         for var in variables:
-            print("variable: " + str(var))
+            # print("variable: " + str(var))
             self.add(var)
 
     def get_nodes(self):
@@ -115,8 +115,6 @@ class Graph(object):
             input = self.node_values[parent][0]
             inputs.append(input)
         return inputs
-
-
 
     def get_output(self, node):
         """
@@ -159,9 +157,9 @@ class Graph(object):
         accumulator for the node, with correct shape.
         """
         "*** YOUR CODE HERE ***"
-        self.nodes += [node]
-        output = node.forward(self.get_inputs(node))
-
+        self.nodes.append(node)
+        inputs = self.get_inputs(node)
+        output = node.forward(inputs)
         self.node_values[node] = [output, np.zeros_like(output)]
 
     def backprop(self):
@@ -182,7 +180,7 @@ class Graph(object):
         "*** YOUR CODE HERE ***"
         nodes = self.get_nodes()
         self.node_values[loss_node][1] = 1.0
-        indeces = np.arange((len(nodes) - 1), -1, -1)
+        indeces = np.arange(len(nodes) - 1, -1, -1)
         for i in indeces:
             node = nodes[i]
             gradients = node.backward(self.get_inputs(node), self.get_gradient(node))
@@ -201,8 +199,8 @@ class Graph(object):
         """
         "*** YOUR CODE HERE ***"
         for node in self.get_nodes():
-            if type(node) is Variable:
-                node.data -= (step_size * self.get_gradient(node))
+            if isinstance(node, Variable):
+                node.data -= self.get_gradient(node) * step_size
 
 class DataNode(object):
     """
