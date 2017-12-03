@@ -75,6 +75,15 @@ class Graph(object):
         so don't forget to call `self.add` on each of the variables.
         """
         "*** YOUR CODE HERE ***"
+        for var in variables:
+            self.add(var)
+
+        self.inputs = []
+        self.nodes = []
+        self.outputs = []
+        self.gradient = 0
+
+
 
     def get_nodes(self):
         """
