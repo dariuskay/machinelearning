@@ -203,6 +203,16 @@ class DigitClassificationModel(Model):
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
 
+        self.learning_rate = .09
+
+        hidden_layers = 600
+
+        self.w1 = nn.Variable(784, hidden_layers)
+        self.b1 = nn.Variable(hidden_layers)
+        self.w2 = nn.Variable(hidden_layers, 784)
+        self.b2 = nn.Variable(784)
+        self.w3 = nn.Variable(784, 10)
+
     def run(self, x, y=None):
         """
         Runs the model for a batch of examples.
@@ -227,10 +237,26 @@ class DigitClassificationModel(Model):
         """
         "*** YOUR CODE HERE ***"
 
+        graph = nn.Graph([self.w1,self.b1,self.w2,self.b2,self.w3])
+        input_x = nn.Input(graph, x)
+        mul1 = nn.MatrixMultiply(graph, input_x, self.w1)
+        add1 = nn.MatrixVectorAdd(graph, mul1, self.b1)
+        reLU = nn.ReLU(graph, add1)
+        mul2 = nn.MatrixMultiply(graph, reLU, self.w2)
+        add2 = nn.MatrixVectorAdd(graph, mul2, self.b2)
+        mul3 = nn.MatrixMultiply(graph, add2, self.w3)
+
         if y is not None:
             "*** YOUR CODE HERE ***"
+            input_y = nn.Input(graph, y)
+
+            loss = nn.SoftmaxLoss(graph, mul3, input_y)
+            return graph
+
         else:
             "*** YOUR CODE HERE ***"
+
+            return graph.get_output(mul3)
 
 
 class DeepQModel(Model):
@@ -251,6 +277,16 @@ class DeepQModel(Model):
         # Remember to set self.learning_rate!
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
+
+        self.learning_rate = .07
+
+        hidden_layers = 90
+
+        self.w1 = nn.Variable(4, hidden_layers)
+        self.b1 = nn.Variable(hidden_layers)
+        self.w2 = nn.Variable(hidden_layers, 4)
+        self.b2 = nn.Variable(4)
+        self.w3 = nn.Variable(4, 10)
 
     def run(self, states, Q_target=None):
         """
@@ -279,10 +315,27 @@ class DeepQModel(Model):
         """
         "*** YOUR CODE HERE ***"
 
+        graph = nn.Graph([self.w1,self.b1,self.w2,self.b2,self.w3])
+        input_states = nn.Input(graph, states)
+        mul1 = nn.MatrixMultiply(graph, input_states, self.w1)
+        add1 = nn.MatrixVectorAdd(graph, mul1, self.b1)
+        reLU = nn.ReLU(graph, add1)
+        mul2 = nn.MatrixMultiply(graph, reLU, self.w2)
+        add2 = nn.MatrixVectorAdd(graph, mul2, self.b2)
+        reLU2 = nn.ReLU(graph, add2)
+        mul3 = nn.MatrixMultiply(graph, reLU2, self.w3)
+        # mul4 = nn.MatrixMultiply(graph, mul3, nn.Input(graph, np.ones_like(mul3.shape)*-1))
+
         if Q_target is not None:
             "*** YOUR CODE HERE ***"
+            input_Q_target = nn.Input(graph, Q_target)
+            loss = nn.SquareLoss(graph, mul3, input_Q_target)
+            return graph
+
         else:
             "*** YOUR CODE HERE ***"
+
+            return graph.get_output(mul3)
 
     def get_action(self, state, eps):
         """
