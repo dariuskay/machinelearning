@@ -41,9 +41,9 @@ class RegressionModel(Model):
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
 
-        self.learning_rate = .04
+        self.learning_rate = .06
 
-        hidden_layers = 60
+        hidden_layers = 100
 
         self.w1 = nn.Variable(1, hidden_layers)
         self.b1 = nn.Variable(hidden_layers)
@@ -113,9 +113,9 @@ class OddRegressionModel(Model):
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
 
-        self.learning_rate = .04
+        self.learning_rate = .06
 
-        hidden_layers = 60
+        hidden_layers = 100
 
         self.w1 = nn.Variable(1, hidden_layers)
         self.b1 = nn.Variable(hidden_layers)
@@ -380,17 +380,15 @@ class LanguageIDModel(Model):
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
 
-        self.learning_rate = .05
+        self.learning_rate = .06
 
-        hidden_layers = 200
+        hidden_layers = 400
 
         self.w1 = nn.Variable(47, hidden_layers)
         self.b1 = nn.Variable(hidden_layers)
         self.w2 = nn.Variable(hidden_layers, 47)
         self.b2 = nn.Variable(47)
         self.w3 = nn.Variable(47, 5)
-
-
 
     def run(self, xs, y=None):
         """
@@ -437,7 +435,7 @@ class LanguageIDModel(Model):
 
         yeet = xs[0]
 
-        for i in np.arange(0, len(xs), 1):
+        for i in np.arange(1, len(xs), 1):
             yeet += xs[i]
 
         input_xs = nn.Input(graph, yeet)
