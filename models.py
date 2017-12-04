@@ -380,6 +380,18 @@ class LanguageIDModel(Model):
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
 
+        self.learning_rate = .05
+
+        hidden_layers = 200
+
+        self.w1 = nn.Variable(47, hidden_layers)
+        self.b1 = nn.Variable(hidden_layers)
+        self.w2 = nn.Variable(hidden_layers, 47)
+        self.b2 = nn.Variable(47)
+        self.w3 = nn.Variable(47, 5)
+
+
+
     def run(self, xs, y=None):
         """
         Runs the model for a batch of examples.
@@ -421,7 +433,26 @@ class LanguageIDModel(Model):
 
         "*** YOUR CODE HERE ***"
 
+        graph = nn.Graph([self.w1,self.b1,self.w2,self.b2,self.w3])
+
+        yeet = xs[0]
+
+        for i in np.arange(0, len(xs), 1):
+            yeet += xs[i]
+
+        input_xs = nn.Input(graph, yeet)
+        mul1 = nn.MatrixMultiply(graph, input_xs, self.w1)
+        add1 = nn.MatrixVectorAdd(graph, mul1, self.b1)
+        reLU = nn.ReLU(graph, add1)
+        mul2 = nn.MatrixMultiply(graph, reLU, self.w2)
+        add2 = nn.MatrixVectorAdd(graph, mul2, self.b2)
+        mul3 = nn.MatrixMultiply(graph, add2, self.w3)
+
         if y is not None:
             "*** YOUR CODE HERE ***"
+            input_y = nn.Input(graph, y)
+            loss = nn.SoftmaxLoss(graph, mul3, input_y)
+            return graph
         else:
             "*** YOUR CODE HERE ***"
+            return graph.get_output(mul3)
