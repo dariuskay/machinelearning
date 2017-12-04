@@ -45,10 +45,10 @@ class RegressionModel(Model):
 
         hidden_layers = 60
 
-        self.w0 = nn.Variable(1, hidden_layers)
-        self.b0 = nn.Variable(hidden_layers)
-        self.w1 = nn.Variable(hidden_layers, 1)
-        self.b1 = nn.Variable(1)
+        self.w1 = nn.Variable(1, hidden_layers)
+        self.b1 = nn.Variable(hidden_layers)
+        self.w2 = nn.Variable(hidden_layers, 1)
+        self.b2 = nn.Variable(1)
 
     def run(self, x, y=None):
         """
@@ -71,13 +71,13 @@ class RegressionModel(Model):
         """
         "*** YOUR CODE HERE ***"
 
-        graph = nn.Graph([self.w0,self.b0,self.w1,self.b1])
+        graph = nn.Graph([self.w1,self.b1,self.w2,self.b2])
         input_x = nn.Input(graph, x)
-        xw0 = nn.MatrixMultiply(graph, input_x, self.w0)
-        xwb0 = nn.MatrixVectorAdd(graph, xw0, self.b0)
-        reLU = nn.ReLU(graph, xwb0)
-        xw1 = nn.MatrixMultiply(graph, reLU, self.w1)
-        xwb1 = nn.MatrixVectorAdd(graph, xw1, self.b1)
+        mul1 = nn.MatrixMultiply(graph, input_x, self.w1)
+        add1 = nn.MatrixVectorAdd(graph, mul1, self.b1)
+        reLU = nn.ReLU(graph, add1)
+        mul2 = nn.MatrixMultiply(graph, reLU, self.w2)
+        add2 = nn.MatrixVectorAdd(graph, mul2, self.b2)
 
         if y is not None:
             # At training time, the correct output `y` is known.
@@ -88,14 +88,13 @@ class RegressionModel(Model):
 
             input_y = nn.Input(graph, y)
 
-            loss = nn.SquareLoss(graph, xwb1, input_y)
-
+            loss = nn.SquareLoss(graph, add2, input_y)
             return graph
         else:
             # At test time, the correct output is unknown.
             # You should instead return your model's prediction as a numpy array
             "*** YOUR CODE HERE ***"
-            return graph.get_output(xwb1)
+            return graph.get_output(add2)
 
 class OddRegressionModel(Model):
     """
@@ -114,6 +113,15 @@ class OddRegressionModel(Model):
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
 
+        self.learning_rate = .04
+
+        hidden_layers = 60
+
+        self.w1 = nn.Variable(1, hidden_layers)
+        self.b1 = nn.Variable(hidden_layers)
+        self.w2 = nn.Variable(hidden_layers, 1)
+        self.b2 = nn.Variable(1)
+
     def run(self, x, y=None):
         """
         Runs the model for a batch of examples.
@@ -135,16 +143,43 @@ class OddRegressionModel(Model):
         """
         "*** YOUR CODE HERE ***"
 
+        # g(x)
+        graph = nn.Graph([self.w1,self.b1,self.w2,self.b2])
+        input_x = nn.Input(graph, x)
+        mul1 = nn.MatrixMultiply(graph, input_x, self.w1)
+        add1 = nn.MatrixVectorAdd(graph, mul1, self.b1)
+        reLU = nn.ReLU(graph, add1)
+        mul2 = nn.MatrixMultiply(graph, reLU, self.w2)
+        add2 = nn.MatrixVectorAdd(graph, mul2, self.b2)
+
+        # -g(-x)
+        neg_input_x = nn.Input(graph, np.dot(x, np.array([[-1]])))
+        neg_mul1 = nn.MatrixMultiply(graph, neg_input_x, self.w1)
+        neg_add1 = nn.MatrixVectorAdd(graph, neg_mul1, self.b1)
+        neg_reLU = nn.ReLU(graph, neg_add1)
+        neg_mul2 = nn.MatrixMultiply(graph, neg_reLU, self.w2)
+        neg_add2 = nn.MatrixVectorAdd(graph, neg_mul2, self.b2)
+        neg_mul3 = nn.MatrixMultiply(graph, neg_add2, nn.Input(graph, np.array([[-1.0]])))
+
+        add3 = nn.MatrixVectorAdd(graph, add2, neg_mul3)
+
+
         if y is not None:
             # At training time, the correct output `y` is known.
             # Here, you should construct a loss node, and return the nn.Graph
             # that the node belongs to. The loss node must be the last node
             # added to the graph.
             "*** YOUR CODE HERE ***"
+
+            input_y = nn.Input(graph, y)
+            loss = nn.SquareLoss(graph, add3, input_y)
+            return graph
+
         else:
             # At test time, the correct output is unknown.
             # You should instead return your model's prediction as a numpy array
             "*** YOUR CODE HERE ***"
+            return graph.get_output(add3)
 
 class DigitClassificationModel(Model):
     """
