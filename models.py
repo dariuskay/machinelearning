@@ -278,15 +278,15 @@ class DeepQModel(Model):
         # You may use any learning rate that works well for your architecture
         "*** YOUR CODE HERE ***"
 
-        self.learning_rate = .07
+        self.learning_rate = .002
 
-        hidden_layers = 90
+        hidden_layers = 100
 
         self.w1 = nn.Variable(4, hidden_layers)
         self.b1 = nn.Variable(hidden_layers)
         self.w2 = nn.Variable(hidden_layers, 4)
         self.b2 = nn.Variable(4)
-        self.w3 = nn.Variable(4, 10)
+        self.w3 = nn.Variable(4, 2)
 
     def run(self, states, Q_target=None):
         """
@@ -334,6 +334,9 @@ class DeepQModel(Model):
 
         else:
             "*** YOUR CODE HERE ***"
+
+            # print graph.get_output(mul3).shape
+            # print self.num_actions
 
             return graph.get_output(mul3)
 
